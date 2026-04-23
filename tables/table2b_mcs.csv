@@ -1,0 +1,25 @@
+asset,model,in_75% MCS,in_90% MCS,MCS p
+SPX,HAR,False,False,0.0
+SPX,HARJ,False,False,0.0
+SPX,SHAR,False,False,0.013
+SPX,HARQ,True,True,1.0
+SPX,HARQ_F,False,False,0.013
+SPX,CHAR,False,False,0.0
+NDX,HAR,False,False,0.002
+NDX,HARJ,False,False,0.002
+NDX,SHAR,False,False,0.041
+NDX,HARQ,True,True,1.0
+NDX,HARQ_F,False,False,0.002
+NDX,CHAR,False,False,0.0
+RUT,HAR,True,True,0.931
+RUT,HARJ,True,True,1.0
+RUT,SHAR,True,True,0.81
+RUT,HARQ,True,True,0.931
+RUT,HARQ_F,True,True,0.758
+RUT,CHAR,True,True,0.81
+DJIA,HAR,False,False,0.002
+DJIA,HARJ,False,False,0.002
+DJIA,SHAR,False,False,0.003
+DJIA,HARQ,False,True,0.195
+DJIA,HARQ_F,True,True,1.0
+DJIA,CHAR,False,False,0.002
