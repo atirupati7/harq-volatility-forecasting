@@ -30,7 +30,9 @@ harq-volatility-forecasting/
 ├── PROJECT_WRITEUP.md             # standalone 4,700-word writeup
 ├── requirements.txt
 ├── harq_analysis.ipynb            # primary deliverable
-├── report.md / report.pdf         # two-page final report
+├── report.tex / references.bib    # LaTeX source for the final report
+├── report.pdf                     # compiled 3-page final report
+├── report.md                      # content source (kept as a readable reference)
 ├── slide_spec.md                  # text spec for Gemini to render slide
 ├── data/
 │   ├── raw/                       # NOT committed; reconstructible
@@ -41,6 +43,8 @@ harq-volatility-forecasting/
 ```
 
 ## Reproducing from scratch
+
+**Prerequisites.** Python 3.12 and a LaTeX distribution (TeX Live, MacTeX, or equivalent) for compiling the report. The build was developed against [tectonic](https://tectonic-typesetting.github.io/), which handles bibtex internally in a single pass; `pdflatex` + `bibtex` also work.
 
 ```bash
 # 1. Python 3.12 environment
@@ -54,8 +58,13 @@ python scripts/download_binance.py
 # (optional) export POLYGON_API_KEY=<key>
 # python scripts/download_polygon.py
 
-# 3. Open and run the notebook
+# 3. Open and run the notebook (reproduces tables, figures, and processed CSVs)
 jupyter notebook harq_analysis.ipynb    # Run All
+
+# 4. Compile the LaTeX report. Tectonic is a one-shot build:
+tectonic report.tex
+# Or, with a traditional TeX Live install, the standard triple-compile:
+#   pdflatex report.tex && bibtex report && pdflatex report.tex && pdflatex report.tex
 ```
 
 The notebook reads only from `data/processed/*.csv`, which *is* committed. A clone + `pip install -r requirements.txt` + Run All reproduces every table, figure, and number in `report.pdf`.
