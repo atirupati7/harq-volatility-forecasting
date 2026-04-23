@@ -2,63 +2,45 @@
 
 ## Brief
 
-Build a single 16:9 academic presentation slide. Clean, white
-background, dark text, sans-serif body with a serif title. No emojis,
-no decorative clipart. Aspect ratio 16:9. Intended audience: quant-team
-researchers — they want numbers, not logos.
+Build a single 16:9 academic presentation slide. Clean, white background, dark text, sans-serif body with a serif title. No emojis, no decorative clipart. Aspect ratio 16:9. Audience: quant-team researchers — they want numbers, not logos.
 
 ## Title and subtitle
 
 - **Title (large, top-left):** *Exploiting the errors, revisited*
-- **Subtitle (one line below, smaller):** HARQ is the unique best
-  volatility forecaster post-publication; NGBoost-HARQ delivers
-  calibrated predictive intervals.
+- **Subtitle (one line below, smaller):** On genuine realized quarticity (no BV² proxy), the HARQ family dominates HAR in BPQ's pre-publication regime and the novel HARQ-Signed delivers the lowest QLIKE on SPX 2002-2013.
 
 ## Key-finding callout (large, bold, above the chart)
 
-> In 2014–2019 SPX, HARQ reduces QLIKE by 19% vs HAR and is the lone
-> model in the 90% Model Confidence Set. NGBoost-HARQ coverage is 97.7%
-> at a 95% target; the naive Gaussian baseline is 99.5%.
+> On SPX 2002-2013 with real RQ, HARQ-F reduces QLIKE by 14.1% vs HAR, HARQ-Signed by 16.0%, and the 90% Model Confidence Set retains only {SHAR, HARQ, HARQ-F}. NGBoost-HARQ on SPY 2014-2019 delivers 96.9% coverage at a 95% target.
 
 ## Central visual: SPX QLIKE heatmap (7 models × 4 regimes)
 
-Render this as a heatmap with cell values shown. Use a diverging
-red-yellow-green palette normalized per column (so green = best in that
-regime, red = worst). Cells with no data (COVID onset / Post-COVID)
-should be drawn as empty grey.
+Render this as a heatmap with cell values shown. Use a diverging red-blue palette centered on HAR's QLIKE per column, so blue = beats HAR, red = loses to HAR, empty-grey = unevaluable. Annotate each populated cell with the QLIKE value (four decimals).
 
-**Data (paste verbatim into the heatmap):**
+**Data (paste verbatim into the heatmap; all values from `tables/table5_heatmap_data.csv`):**
 
-|             | Pre-publication (2000-01→2013-12) | Post-pub calm (2014-01→2019-12) | COVID onset (2020-02) | Post-COVID (2021+) |
-|-------------|----------------------------------:|--------------------------------:|----------------------:|-------------------:|
-| HAR         | 0.2025                            | 0.2809                          | N/A                   | N/A                |
-| HARJ        | 0.1912                            | 0.2998                          | N/A                   | N/A                |
-| SHAR        | 0.1918                            | 0.2681                          | N/A                   | N/A                |
-| HARQ        | 0.2108                            | **0.2273**                      | N/A                   | N/A                |
-| HARQ-F      | 0.2231                            | 0.2428                          | N/A                   | N/A                |
-| CHAR        | 0.1935                            | 0.3182                          | N/A                   | N/A                |
-| HARQ-Signed | 0.1998                            | 0.2224                          | N/A                   | N/A                |
+|                 | Pre-publication (n = 3,075) | Post-pub calm (n = 1,494) | COVID onset | Post-COVID 2022+ |
+|-----------------|----------------------------:|--------------------------:|------------:|-----------------:|
+| HAR             | 0.1495                      | 0.2615                    | n/a         | n/a              |
+| HARJ            | 0.1451                      | 0.2592                    | n/a         | n/a              |
+| SHAR            | 0.1296                      | n/a                       | n/a         | n/a              |
+| HARQ            | 0.1314                      | 0.2689                    | n/a         | n/a              |
+| HARQ-F          | 0.1284                      | 0.3035                    | n/a         | n/a              |
+| CHAR            | 0.1471                      | 0.2682                    | n/a         | n/a              |
+| HARQ-Signed     | **0.1256**                  | n/a                       | n/a         | n/a              |
 
 Notes for the renderer:
-- Bold the HARQ cell (0.2273) in the post-pub-calm column as the
-  headline finding.
-- COVID-onset and Post-COVID columns are left empty with a small
-  footnote: "Data gap: Oxford-Man ends 2020-02-21; Polygon free tier
-  not available for this build."
+
+- Bold the HARQ-Signed pre-publication cell (0.1256) as the headline: it is the lowest QLIKE in the figure.
+- COVID and Post-COVID columns are left empty with a small footnote: "Data gap: SPYRM ends 2019-12-31; filling these regimes requires paid minute data, out of scope."
+- Post-pub calm column SHAR and HARQ-Signed cells are marked n/a because SPYRM does not ship positive/negative semivariances.
+- The post-publication-calm column shows HAR is the best available model in that regime — include this honestly in the legend or as a small caption underneath.
 
 ## Supporting bullets (below the heatmap, three columns)
 
-1. **Reproduction check.** SHAR QLIKE is 5.4% below HAR on SPX
-   2002–2013, exactly as Patton–Sheppard (2015) report. HARQ reduces
-   MSE by 4.4% on the same window (BPQ direction).
-2. **Novel: HARQ-Signed** pairs BPQ's measurement-error correction
-   with Patton–Sheppard signed semivariances. In-sample β<sub>−</sub> −
-   β<sub>+</sub> = +1.10 (strong bad-vol persistence). Wins +2.2% on
-   SPX, +1.5% on DJIA in post-pub calm.
-3. **Crypto check fails the hypothesis.** HARQ's edge over HAR is
-   19% on SPX but only 7% on BTC / ETH — 24/7 markets have cleaner
-   price processes, not noisier. Signed-jump asymmetry also vanishes in
-   crypto (no overnight gaps).
+1. **Reproduction check.** SHAR QLIKE is 5.4% below HAR on SPX 2002-2013 rolling 1,000-day window (DM p = 0.0003), matching Patton–Sheppard (2015). HARQ reduces MSE by 4.4% on the same window, matching BPQ direction.
+2. **Novel: HARQ-Signed.** Combines BPQ's √RQ interaction and Patton–Sheppard signed semivariances. In-sample β_Q = −3.4×10³, β₋ − β₊ = +1.10 (bad-vol persistence). Walk-forward on SPX pre-publication: 4.6% below HARQ, DM p = 2.5×10⁻⁵.
+3. **Crypto check fails the hypothesis.** HARQ-over-HAR ratio is 0.877 on SPX pre-pub, 0.930 on BTC, 0.928 on ETH. 24/7 crypto markets appear to produce cleaner price processes than US RTH, not noisier; signed-jump asymmetry also vanishes in 24/7 markets.
 
 ## Bottom-right attribution (small)
 
@@ -68,12 +50,7 @@ Notes for the renderer:
 
 - 16:9 aspect ratio; full-bleed white background.
 - Title in dark navy (#1a2a44), body in dark grey (#333).
-- Heatmap palette: `RdYlGn_r` inverted — best (lowest QLIKE) = dark
-  green (#2a9d8f), worst = red (#e76f51), midpoint = pale yellow. Use a
-  diverging normalization per column so values are visually comparable
-  within a regime, not across.
-- Font: "Inter" or "IBM Plex Sans" for body; "Fraunces" or "Georgia"
-  for title.
-- Keep whitespace generous. Heatmap should occupy roughly 50% of the
-  slide's horizontal real estate.
+- Heatmap palette: diverging blue-red (`RdBu_r`), blue = beats HAR, red = loses to HAR, colorbar label "QLIKE − QLIKE(HAR)". Cell text: white on dark cells, black on light.
+- Font: "Inter" or "IBM Plex Sans" for body; "Fraunces" or "Georgia" for title.
+- Whitespace generous. Heatmap ≈ 50% of horizontal space.
 - No page numbers, no slide decorations, no emojis.

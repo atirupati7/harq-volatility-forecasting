@@ -1,25 +1,12 @@
-asset,model,in_75% MCS,in_90% MCS,MCS p
-SPX,HAR,False,False,0.0
-SPX,HARJ,False,False,0.0
-SPX,SHAR,False,False,0.01
-SPX,HARQ,True,True,1.0
-SPX,HARQ_F,False,False,0.01
-SPX,CHAR,False,False,0.0
-NDX,HAR,False,False,0.005
-NDX,HARJ,False,False,0.005
-NDX,SHAR,False,False,0.041
-NDX,HARQ,True,True,1.0
-NDX,HARQ_F,False,False,0.005
-NDX,CHAR,False,False,0.0
-RUT,HAR,True,True,0.912
-RUT,HARJ,True,True,1.0
-RUT,SHAR,True,True,0.825
-RUT,HARQ,True,True,0.912
-RUT,HARQ_F,True,True,0.775
-RUT,CHAR,True,True,0.825
-DJIA,HAR,False,False,0.001
-DJIA,HARJ,False,False,0.001
-DJIA,SHAR,False,False,0.001
-DJIA,HARQ,False,True,0.199
-DJIA,HARQ_F,True,True,1.0
-DJIA,CHAR,False,False,0.001
+asset,regime,model,in_75% MCS,in_90% MCS,MCS p,n_common
+SPX,Pre-publication,HAR,False,False,0.0,3075
+SPX,Pre-publication,HARJ,False,False,0.0,3075
+SPX,Pre-publication,SHAR,True,True,0.632,3075
+SPX,Pre-publication,HARQ,True,True,0.298,3075
+SPX,Pre-publication,HARQ_F,True,True,1.0,3075
+SPX,Pre-publication,CHAR,False,False,0.0,3075
+SPX,Post-pub calm,HAR,True,True,0.532,1494
+SPX,Post-pub calm,HARJ,True,True,1.0,1494
+SPX,Post-pub calm,HARQ,True,True,0.342,1494
+SPX,Post-pub calm,HARQ_F,True,True,0.342,1494
+SPX,Post-pub calm,CHAR,True,True,0.342,1494
