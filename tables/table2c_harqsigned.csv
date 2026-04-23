@@ -1,5 +1,0 @@
-asset,model,regime,n,QLIKE,DM p (vs HAR),DM p (vs HARQ)
-SPX,HARQSigned,Pre-publication,3075,0.1255688898369345,0.0,2.4697013642160925e-05
-SPX,HARQSigned,Post-pub calm,0,,,
-SPX,HARQSigned,COVID onset,0,,,
-SPX,HARQSigned,Post-COVID / 2022+,0,,,

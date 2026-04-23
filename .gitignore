@@ -18,6 +18,10 @@ secrets/
 # Raw data (large, reconstructible via scripts/)
 data/raw/
 
+# Generated artifacts (produced by the notebook; not committed)
+figures/
+tables/
+
 # Notebook execution artifacts that aren't the source
 *.nbconvert.ipynb
 
