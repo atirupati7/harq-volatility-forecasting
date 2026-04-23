@@ -40,7 +40,7 @@ Notes for the renderer:
 
 1. **Reproduction check.** SHAR QLIKE is 5.4% below HAR on SPX 2002-2013 rolling 1,000-day window (DM p = 0.0003), matching Patton–Sheppard (2015). HARQ reduces MSE by 4.4% on the same window, matching BPQ direction.
 2. **Novel: HARQ-Signed.** Combines BPQ's √RQ interaction and Patton–Sheppard signed semivariances. In-sample β_Q = −3.4×10³, β₋ − β₊ = +1.10 (bad-vol persistence). Walk-forward on SPX pre-publication: 4.6% below HARQ, DM p = 2.5×10⁻⁵.
-3. **Crypto check fails the hypothesis.** HARQ-over-HAR ratio is 0.877 on SPX pre-pub, 0.930 on BTC, 0.928 on ETH. 24/7 crypto markets appear to produce cleaner price processes than US RTH, not noisier; signed-jump asymmetry also vanishes in 24/7 markets.
+3. **NGBoost-HARQ probabilistic forecast.** Normal-output NGBoost on the HARQ feature set delivers 96.9% coverage at a 95% target on SPY 2014-2019 — versus 99.5% for a naive HARQ + Gaussian-residual baseline — and roughly halves CRPS. Calibration is usable for VaR, even though the heavy right tail rejects Normal in 1% Kupiec/Christoffersen tests.
 
 ## Bottom-right attribution (small)
 

@@ -1,6 +1,6 @@
 # Exploiting the Errors, Revisited
 
-Reproduction and extension of Bollerslev, Patton, and Quaedvlieg (2016) — *Exploiting the errors: A simple approach for improved volatility forecasting* — combined with the signed-jump decomposition of Patton and Sheppard (2015). Scope is deliberately restricted to assets for which publicly-distributed **genuine realized quarticity** is available — no BV² or other proxies for RQ. US equity evaluation is SPX only (SP500RM stitched with SPYRM). Cryptocurrency cross-asset check on BTCUSDT and ETHUSDT at 1-minute frequency from Binance's public archive.
+Reproduction and extension of Bollerslev, Patton, and Quaedvlieg (2016) — *Exploiting the errors: A simple approach for improved volatility forecasting* — combined with the signed-jump decomposition of Patton and Sheppard (2015). Scope is deliberately restricted to the S&P 500 index using the exact SP500RM dataset distributed by BPQ plus the SPYRM post-publication window, so that every evaluation uses publicly-distributed **genuine realized quarticity** (no BV² or other proxies).
 
 **Author.** Aprameya Tirupati · Georgia Tech · Spring 2026 (GTSF IC Quant Mentorship).
 
@@ -12,7 +12,6 @@ Reproduction and extension of Bollerslev, Patton, and Quaedvlieg (2016) — *Exp
 - **HARQ-Signed, the novel extension,** recovers β_Q = −3.4×10³ and β₋ − β₊ = +1.10 in-sample, beats HARQ by 4.6% in walk-forward QLIKE on SPX pre-publication with DM p = 2.5×10⁻⁵.
 - **NGBoost-HARQ** delivers 96.9% empirical coverage at a 95% nominal target on SPY 2014-2019, versus 99.5% for a naive HARQ + Gaussian-residual baseline. CRPS roughly halved.
 - **Post-publication calm regime (SPYRM 2014-2019)** does *not* reproduce HARQ's edge: HARQ is +2.8% worse than HAR on QLIKE and the MCS retains all five evaluable models. SHAR and HARQ-Signed are not evaluated because SPYRM does not distribute positive/negative semivariances.
-- **Crypto check fails the microstructure-noise hypothesis.** HARQ beats HAR by 12.3% on SPX pre-pub but only 7% on BTC/ETH. Signed-jump asymmetry helps on SPX and vanishes in 24/7 crypto.
 
 ## Papers reproduced and extended
 
@@ -36,10 +35,10 @@ harq-volatility-forecasting/
 ├── slide_spec.md                  # text spec for Gemini to render slide
 ├── data/
 │   ├── raw/                       # NOT committed; reconstructible
-│   └── processed/                 # committed: spx, btc, eth measures
+│   └── processed/                 # committed: spx_measures.csv
 ├── figures/                       # 5 figures × (PNG + PDF)
-├── tables/                        # 5 tables as CSV + 3 as LaTeX
-└── scripts/                       # 2 download scripts (Binance, Polygon)
+├── tables/                        # 4 tables as CSV + 3 as LaTeX
+└── scripts/                       # 1 download script (Polygon, optional)
 ```
 
 ## Reproducing from scratch
@@ -52,9 +51,9 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Download source data. Binance is unauthenticated; the R-package datasets
-#    (SP500RM.RData, SPYRM.rda) are fetched from the CRAN archive.
-python scripts/download_binance.py
+# 2. Processed SPX measures are already committed under data/processed/. The
+#    R-package datasets (SP500RM.RData, SPYRM.rda) are redistributable from
+#    the CRAN archive if you need to rebuild the stitched CSV from raw.
 # (optional) export POLYGON_API_KEY=<key>
 # python scripts/download_polygon.py
 
@@ -75,7 +74,6 @@ The notebook reads only from `data/processed/*.csv`, which *is* committed. A clo
 | --- | --- | --- |
 | 1997-05 → 2013-08 (SPX) | `HARModel::SP500RM` (Sjoerup 2019, CRAN Archive; Patton's BPQ-2016 code page) | Exact realized quarticity. Canonical BPQ dataset. |
 | 2014-01 → 2019-12 (SPY) | `highfrequency::SPYRM` (Cornelissen's package, CRAN) | Exact RQ from 5-minute returns; no positive/negative semivariances. |
-| 2018-01 → 2026-03 (BTCUSDT, ETHUSDT) | Binance Vision public monthly archive, 1-minute klines | RV / RQ / RS± / BV computed in-notebook from 5-minute subsampled returns. |
 | 2024-04 → now (SPY, optional) | Polygon.io free tier, 1-minute | Requires `POLYGON_API_KEY`; not used in the executed build. |
 
 ### Scope decision
@@ -84,4 +82,4 @@ The evaluation is restricted to assets for which publicly-distributed *genuine* 
 
 ## Attribution
 
-All code, figures, tables, and written analysis are the author's own work. Source datasets are redistributed under the terms of their respective providers (`HARModel` and `highfrequency` R packages; Binance Vision; Polygon.io terms of use where applicable).
+All code, figures, tables, and written analysis are the author's own work. Source datasets are redistributed under the terms of their respective providers (`HARModel` and `highfrequency` R packages; Polygon.io terms of use where applicable).

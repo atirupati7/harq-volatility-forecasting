@@ -106,8 +106,8 @@ def main() -> int:
             "  4. Re-run: python scripts/download_polygon.py\n"
             "\n"
             "The notebook will still run without this step, using the\n"
-            "Oxford-Man archive (through 2020-02-21) and Binance crypto data.\n"
-            "Post-2024 US-equity out-of-sample evaluation will be skipped.\n",
+            "committed SP500RM + SPYRM processed CSV. Post-2019 US-equity\n"
+            "out-of-sample evaluation will be skipped.\n",
             file=sys.stderr,
         )
         return 0

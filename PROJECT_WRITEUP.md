@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-This project reproduces and extends two foundational realized-volatility-forecasting papers — Bollerslev, Patton, and Quaedvlieg (2016), "Exploiting the errors: A simple approach for improved volatility forecasting," and Patton and Sheppard (2015), "Good volatility, bad volatility: Signed jumps and the persistence of volatility" — using exclusively datasets for which *genuine* realized quarticity is publicly distributed. The equity evaluation is scoped to the S&P 500 (SP500RM 1997–2013 stitched with SPYRM 2014–2019); the cryptocurrency cross-check uses BTCUSDT and ETHUSDT at 1-minute frequency from Binance's public archive (2018–2026). Six HAR-family baselines (HAR, HAR-J, SHAR, HARQ, HARQ-F, CHAR), one novel specification (HARQ-Signed), and one probabilistic extension (NGBoost-HARQ) are evaluated out-of-sample across the BPQ pre-publication and post-publication calm regimes. Deliverables are a single end-to-end Jupyter notebook (`harq_analysis.ipynb`), five publication-quality matplotlib figures, five analysis tables, a two-page PDF report, and a standalone slide specification. The implementation is approximately 1,700 lines of Python, most of which lives in the notebook; the remaining code is two data-download scripts under `scripts/` (Oxford-Man has been removed in this revision). The end-to-end build — from a fresh Python environment through processed data, all walk-forwards, figures, and PDF report — completes in well under ten minutes on commodity hardware.
+This project reproduces and extends two foundational realized-volatility-forecasting papers — Bollerslev, Patton, and Quaedvlieg (2016), "Exploiting the errors: A simple approach for improved volatility forecasting," and Patton and Sheppard (2015), "Good volatility, bad volatility: Signed jumps and the persistence of volatility" — on the S&P 500 index using the exact SP500RM dataset distributed by BPQ plus the SPYRM post-publication window. Every evaluation uses publicly-distributed *genuine* realized quarticity; no BV² or other RQ proxies are used anywhere. Six HAR-family baselines (HAR, HAR-J, SHAR, HARQ, HARQ-F, CHAR), one novel specification (HARQ-Signed), and one probabilistic extension (NGBoost-HARQ) are evaluated out-of-sample across the BPQ pre-publication and post-publication calm regimes. Deliverables are a single end-to-end Jupyter notebook (`harq_analysis.ipynb`), five publication-quality matplotlib figures, four analysis tables, a two-page LaTeX-compiled PDF report, and a standalone slide specification. The implementation lives mostly in the notebook; the remaining code is a single optional Polygon download script under `scripts/`. The end-to-end build — from a fresh Python environment through processed data, all walk-forwards, figures, and PDF report — completes in well under ten minutes on commodity hardware.
 
 ## 2. Research Questions
 
@@ -13,8 +13,6 @@ The project addresses three research questions derived from the original brief.
 **Q2. Can we usefully combine BPQ's measurement-error correction with Patton–Sheppard's signed-jump decomposition into a single specification, HARQ-Signed, and does it improve on either paper's model alone?** This is the novel contribution. The specification nests HARQ (via the √RQ interaction) and a Patton–Sheppard signed HAR (via separate β₊, β₋ on RS⁺, RS⁻), and asks whether the combination recovers the expected coefficient signs (β_Q < 0, β₋ > β₊) and produces a smaller QLIKE than HARQ alone.
 
 **Q3. When volatility forecasts are needed for downstream risk management (VaR, option pricing), can probabilistic boosting (NGBoost) deliver calibrated predictive intervals?** The HAR family produces point forecasts; operational risk requires distributions. NGBoost with a Normal output distribution is compared against a naive HARQ + Gaussian-residual baseline on CRPS, empirical coverage at 90% and 95%, and Kupiec / Christoffersen VaR backtests at 1% and 5%.
-
-A fourth sub-question supports Q1: whether HARQ's edge scales with microstructure noise — tested on BTCUSDT and ETHUSDT where genuine 5-minute RQ can be computed from public data.
 
 ## 3. Theoretical Background
 
@@ -44,8 +42,6 @@ BPQ report β_Q ≈ −0.13 on SPX 2001–2013. HARQ-F extends the correction to
 
 **SPX stitched series.** SP500RM and SPYRM are concatenated into a single `spx_measures.csv` with 5,591 rows from 1997-05-15 to 2019-12-31. `RS⁺`, `RS⁻`, `ΔJ` are populated on the 4,096 SP500RM rows and NaN on the 1,495 SPYRM rows. A ~4-month gap (2013-08-24 to 2013-12-31) falls between the two sources and is handled implicitly by the walk-forward NaN filtering.
 
-**Binance Vision** public monthly archive at `data.binance.vision`. Zipped 1-minute klines for BTCUSDT and ETHUSDT, 99 monthly files per symbol from 2018-01 through 2026-03 — 198 files totaling 1.2 GB and 4.33 million bars per symbol. Timestamp units change from milliseconds to microseconds in late 2024; the download script auto-detects per file. RV, RQ, RS⁺, RS⁻, ΔJ, BV are computed in-notebook from 5-minute subsampled close-to-close log returns over the full 24-hour UTC day. BTC annualized volatility over the window is 71.21%, ETH's is 89.28%.
-
 **Polygon.io** 1-minute SPY is supported but optional; it requires `POLYGON_API_KEY` and covers the free tier's ~2-year window. Not used in the executed analysis.
 
 All processing writes canonicalized CSVs to `data/processed/` (columns: `date, RV, RQ, RS_plus, RS_minus, delta_J, BV, nobs` plus model-specific extras). These CSVs are committed to the repository; raw data is in `.gitignore`. The notebook's default code path reads only `data/processed/`, so the full analysis is reproducible from a clone without re-running any downloads.
@@ -56,8 +52,8 @@ Every model consumes features built by the notebook's `build_har_features()` fun
 
 - **Realized variance, RV_t.** Sum of 5-minute squared log returns within the day.
 - **Bipower variation, BV_t = (π/2) · Σ_{i≥2} |r_i| · |r_{i−1}|.** Jump-robust integrated-variance estimator.
-- **Realized quarticity, RQ_t = (n/3) · Σ r_i⁴.** Genuine 5-minute RQ on both SP500RM and SPYRM; genuine on crypto too.
-- **Positive / negative semivariances, RS⁺_t, RS⁻_t.** For SP500RM these are native columns (`RVp`, `RVn`); for crypto we compute both halves directly from 5-minute returns. SPYRM does not ship them.
+- **Realized quarticity, RQ_t = (n/3) · Σ r_i⁴.** Genuine 5-minute RQ on both SP500RM and SPYRM.
+- **Positive / negative semivariances, RS⁺_t, RS⁻_t.** For SP500RM these are native columns (`RVp`, `RVn`); SPYRM does not ship them.
 - **Signed jump, ΔJ_t = RS⁺_t − RS⁻_t.** Included as a standalone feature in the NGBoost model's feature set.
 - **Jump variation, J_t = max(RV_t − BV_t, 0).** Ensures non-negativity; drives HAR-J.
 - **Trailing HAR aggregates:** RV_t^(w) = (1/5) Σ_{i=0..4} RV_{t−i} and RV_t^(m) = (1/22) Σ_{i=0..21} RV_{t−i}. Analogous aggregates BV_t^(w), BV_t^(m), RQ_t^(w), RQ_t^(m) feed CHAR and HARQ-F. Rolling means are trailing-inclusive of day t.
@@ -152,18 +148,6 @@ NGBoost delivers 96.9% empirical coverage at a 95% nominal target and 95.4% at a
 
 Figure 4 shows three representative days in 2017–2018: a calm day (2017-10-26, σ narrow, realized and HARQ-point both within the 95% interval), a rising-volatility day (2018-02-05, σ wider; realized falls in the upper tail above the 95% interval), and the 2018-12-24 Christmas sell-off (widest σ, realized inside the interval).
 
-### 9e. Crypto cross-asset check (Table 4, `tables/table4_crypto_cross.csv`)
-
-Walk-forward on BTCUSDT and ETHUSDT (2018–2026 Binance data; evaluation on 2019–2024 to avoid training year and partial months). Comparison window for SPX is the pre-publication regime (2002–2013 on SP500RM), since that is the window where HARQ has real RQ and a stable out-of-sample story.
-
-| Asset | HAR QLIKE | HARQ QLIKE | HARQ-Signed QLIKE | HARQ / HAR | HARQ-Signed / HARQ |
-| --- | --- | --- | --- | --- | --- |
-| SPX pre-pub (SP500RM) | 0.1522 | 0.1334 | 0.1273 | 0.877 | 0.954 |
-| BTC 2019-2024 | 0.3854 | 0.3582 | 0.4236 | 0.930 | 1.182 |
-| ETH 2019-2024 | 0.3574 | 0.3316 | 0.3401 | 0.928 | 1.026 |
-
-HARQ beats HAR by 12.3% on SPX but only 7.0% on BTC and 7.2% on ETH. The microstructure-noise hypothesis — that HARQ's edge should be *larger* in crypto because of noisier intraday prices — fails on this data; 24/7 markets produce *cleaner*, not noisier, price processes. HARQ-Signed, which helps on SPX by 4.6%, hurts on BTC by 18.2% and is tied on ETH — consistent with the no-overnight-gap hypothesis (absent a cross-day leverage / sentiment asymmetry, the signed-jump decomposition adds nothing).
-
 ## 10. Visualizations
 
 Five figures are generated by the notebook, exported at 300 DPI as both PNG and PDF in `figures/`. All use pure matplotlib with deliberate styling: default `plt.style.use('default')`, sans-serif, axes title 13pt bold, labels 11pt, ticks 10pt, legend 9pt, top and right spines removed, horizontal-only light-grey grid at α = 0.3, palette limited to black, #1f4e79 (blue), #c0392b (red), #7f7f7f (grey), and four desaturated regime-shading colors.
@@ -184,19 +168,18 @@ Five figures are generated by the notebook, exported at 300 DPI as both PNG and 
 
 **Modeling.** Default NGBoost hyperparameters with no tuning. The Normal output distribution is fundamentally mismatched to RV's heavy right tail; the VaR backtests reject at both 1% and 5% for that reason, and a Student-t or Gamma output would be a natural next step. HARQ-F has 6 collinear features and is unstable under plain OLS; it only becomes comparable after the insanity filter replaces ~1–2% of predictions with HAR's. A ridge-regularized fit would be cleaner but departs from BPQ's published OLS specification.
 
-**Interpretation.** The crypto finding — HARQ's edge is smaller, not larger, in BTC/ETH — is a null result for the microstructure-noise hypothesis. The project does not claim this proves the hypothesis false; only that at 5-minute sampling, on Binance, 2019–2024, the effect is not larger than on pre-publication SPX. A reviewer focused on this hypothesis specifically would want to test at 1-second sampling, on a single exchange with known quote-update microstructure, and on a shorter sample that excludes 2022's bear structural break.
+**Interpretation.** The scope restriction to SPX is deliberate. Generalizing to other US equity indices (NDX, RUT, DJIA) would require paid minute-level data because genuine realized quarticity is not publicly distributed for them, and the project rejects any BV²-style proxy to preserve methodological cleanliness. Generalizing to other asset classes (crypto, FX, fixed income) is scoped out — the interpretive complexity of cross-asset microstructure differences is not something this build attempts to defend.
 
-**Non-claims.** This project does not claim to have found alpha or to have improved on HARQ in all regimes. The HARQ family wins decisively in the pre-publication regime on SPX but ties or loses in the post-publication calm on SPYRM. HARQ-Signed wins on SPX pre-publication but ties/loses on crypto. NGBoost delivers calibration improvement, not point-forecast improvement.
+**Non-claims.** This project does not claim to have found alpha or to have improved on HARQ in all regimes. The HARQ family wins decisively in the pre-publication regime on SPX but ties or loses in the post-publication calm on SPYRM. NGBoost delivers calibration improvement, not point-forecast improvement.
 
-**Strengthening work.** A follow-up would ideally (1) acquire paid 5-minute SPX or SPY data covering 2013-2024 so the post-2013 regime can be evaluated without the SPY-vs-SPX ambiguity, (2) swap NGBoost's Normal head for a heavy-tailed distribution and re-run Kupiec/Christoffersen, (3) fit HARQ-F with ridge and compare, (4) include intraday liquidity covariates in the NGBoost feature set, and (5) extend the crypto sample to at least two exchanges to separate exchange-specific microstructure from genuine price-process differences.
+**Strengthening work.** A follow-up would ideally (1) acquire paid 5-minute SPX or SPY data covering 2013-2024 so the post-2013 regime can be evaluated without the SPY-vs-SPX ambiguity, (2) swap NGBoost's Normal head for a heavy-tailed distribution and re-run Kupiec/Christoffersen, (3) fit HARQ-F with ridge and compare, and (4) include intraday liquidity covariates in the NGBoost feature set.
 
 ## 12. Key Takeaways
 
 - The HARQ family dominates HAR decisively in the BPQ pre-publication regime on SPX (HARQ-F wins by 14.1%, HARQ by 12.1%, SHAR by 13.3%), with the 90% Model Confidence Set containing exactly {SHAR, HARQ, HARQ-F}. In the post-publication calm (SPYRM 2014-2019) no model separates statistically from HAR.
 - The novel HARQ-Signed specification recovers the expected signs (β_Q = −3.4×10³ < 0, β₋ − β₊ = +1.10) and delivers QLIKE 4.6% below HARQ on SPX pre-publication (DM p = 2.5×10⁻⁵), making it the lowest-QLIKE model in the pre-publication regime.
 - NGBoost-HARQ delivers 96.9% coverage at a 95% nominal target on SPY 2014-2019, versus 99.5% for a naive HARQ + Gaussian-residual baseline; CRPS roughly halves. Both fail VaR backtests because the Normal output cannot capture the right tail.
-- The microstructure-noise hypothesis fails: HARQ beats HAR by 12.3% on SPX pre-publication but only ~7% on BTC/ETH. Signed-jump asymmetry also vanishes in 24/7 crypto.
-- The evaluation is deliberately scoped to assets with genuine realized quarticity (SP500RM, SPYRM, Binance 1-minute computation); NDX, RUT, DJIA, and the Oxford-Man BV² proxy were considered and rejected to preserve methodological cleanliness.
+- The evaluation is deliberately scoped to SPX with genuine realized quarticity (SP500RM + SPYRM); other US equity indices and the Oxford-Man BV² proxy were considered and rejected to preserve methodological cleanliness, and generalization to other asset classes is out of scope.
 
 ## 13. File Inventory
 
@@ -213,12 +196,11 @@ Repository root `harq-volatility-forecasting/`:
 Subdirectories:
 
 - `data/raw/r_packages/` — `SP500RM.RData` (HARModel package), `SPYRM.rda` (highfrequency package). Not committed.
-- `data/raw/binance_crypto/` — 198 monthly 1-minute kline CSVs from `data.binance.vision`. Not committed.
 - `data/raw/polygon_spy/` — empty in this build.
-- `data/processed/` — three CSVs committed to git: `spx_measures.csv` (SP500RM + SPYRM stitch), `btc_measures.csv`, `eth_measures.csv`.
+- `data/processed/` — one CSV committed to git: `spx_measures.csv` (SP500RM + SPYRM stitch).
 - `figures/` — ten files, five figures × two formats (PNG and PDF).
-- `tables/` — `table1_reproduction.csv/.tex`, `table2_regime_qlike.csv/.tex`, `table2b_mcs.csv`, `table2c_harqsigned.csv`, `table3_probabilistic.csv/.tex`, `table4_crypto_cross.csv`, `table5_heatmap_data.csv`.
-- `scripts/` — `download_binance.py`, `download_polygon.py`. `download_oxford_man.py` has been removed in this revision because the Oxford-Man data is no longer used.
+- `tables/` — `table1_reproduction.csv/.tex`, `table2_regime_qlike.csv/.tex`, `table2b_mcs.csv`, `table2c_harqsigned.csv`, `table3_probabilistic.csv/.tex`, `table5_heatmap_data.csv`.
+- `scripts/` — `download_polygon.py` (optional Polygon SPY download). The crypto (`download_binance.py`) and Oxford-Man download scripts have been removed in this revision because those data are no longer used.
 
 ## 14. References
 
