@@ -1,0 +1,36 @@
+# Env and caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+.env
+*.env
+.env.*
+!.env.example
+
+# Secrets
+*.key
+secrets/
+.secrets/
+
+# Raw data (large, reconstructible via scripts/)
+data/raw/
+
+# Notebook execution artifacts that aren't the source
+*.nbconvert.ipynb
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+
+# OS
+Thumbs.db
